@@ -21,6 +21,7 @@ export default class Application {
     }
 
     private applyMiddlewares(): void {
+        this.app.use(errorHandler);
         this.app.use(this.router.routes());
     }
 
