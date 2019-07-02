@@ -1,0 +1,8 @@
+{
+    "sqlConnection": {
+        "host": "localhost",
+        "user": "node_api_user",
+        "password": "d5M2P7hEHEpcJYsd",
+        "database" : "node_api_db"
+    }
+}

@@ -3,6 +3,7 @@
     "version": "1.0.0",
     "description": "NodeJS api using koa & mysql",
     "scripts": {
+        "setup": "node scripts/setUpDB.js",
         "build": "rm -rf dist && tsc",
         "clean": "rm -rf dist",
         "lint": "eslint 'src/**/*.ts' 'test/**/*.test.ts'",
@@ -18,8 +19,10 @@
     "author": "Alexander Shogenov <i@shagg.ru>",
     "license": "ISC",
     "dependencies": {
+        "app-root-path": "^2.2.1",
         "koa": "^2.7.0",
-        "koa-router": "^7.4.0"
+        "koa-router": "^7.4.0",
+        "mysql2": "^1.6.5"
     },
     "devDependencies": {
         "@types/mocha": "^5.2.7",
