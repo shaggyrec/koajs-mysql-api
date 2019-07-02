@@ -7,8 +7,10 @@ import errorHandler from './middlewares/errorHandler';
 export default class Application {
     private app: Koa;
     private router: Router;
+    private dbConnection: object;
 
-    public constructor() {
+    public constructor(dbConnection: object) {
+        this.dbConnection = dbConnection;
         this.app = new Koa();
         this.router = new Router();
         this.setUpRoutes();

@@ -8,12 +8,14 @@ describe('Application', (): void => {
     describe('Routes test', (): void => {
         let server;
 
-        beforeEach((): void => {
-            server = (new Application()).run(5858);
+        beforeEach(async (): Promise<void> => {
+            const dbConnection = await load();
+            server = (new Application(dbConnection)).run(5858);
         });
 
         afterEach((): void => {
             server.close();
+            end();
         });
 
         it('GET / returns the main page', async (): Promise<void> => {
