@@ -1,6 +1,7 @@
 import { Context } from 'koa';
 import { Connection } from 'mysql2';
 import BookList from '../dbQuery/BookList';
+import Book from '../dbStorage/Book';
 import BadRequest from '../errors/BadRequest';
 
 interface QueryParams {
@@ -14,9 +15,11 @@ interface QueryParams {
 
 class BookController {
     private readonly dbConnection: Connection;
+    private dbStorage: Book;
 
-    public constructor(dbConnection: Connection) {
+    public constructor(dbConnection: Connection, dbStorage: Book) {
         this.dbConnection = dbConnection;
+        this.dbStorage = dbStorage;
     }
 
     public async list(ctx: Context): Promise<void> {
@@ -38,6 +41,19 @@ class BookController {
         }
 
         ctx.body = await dbQuery.execute();
+    }
+
+    public async delete(ctx: Context): Promise<void> {
+        await this.dbStorage.delete(ctx.params.id);
+        ctx.status = 200;
+    }
+    public async create(ctx: Context): Promise<void> {
+        await this.dbStorage.create(ctx.request.body);
+        ctx.status = 201;
+    }
+    public async update(ctx: Context): Promise<void> {
+        await this.dbStorage.update(ctx.params.id, ctx.request.body);
+        ctx.status = 200;
     }
 
     private static assertQueryParametersAreValid(queryParams: QueryParams): void {
