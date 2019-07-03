@@ -9,7 +9,9 @@ describe('Book Service', (): void => {
         service = new BookList(db);
     });
 
-    afterEach((): void => end());
+    afterEach((): void => {
+        end()
+    });
 
     it('should return list of books', async (): Promise<void> => {
         const booksList = await service.list().execute();

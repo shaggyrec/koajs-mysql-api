@@ -1,7 +1,7 @@
 export interface BookInterface {
-    id: number;
+    id?: number;
     title: string;
-    date: Date;
+    date?: Date;
     autor: string;
     description: string;
     image: string;
