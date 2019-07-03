@@ -10,6 +10,8 @@ class BookList {
     private dbQueryOrderDirection: string = 'ASC';
     private dbQueryWhereClause: string = '';
 
+    public static DB_FIELDS: string[] = ['id', 'title', 'date', 'autor', 'description', 'image'];
+
     public constructor(db: Connection) {
         this.db = db;
     }

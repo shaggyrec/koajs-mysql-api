@@ -1,5 +1,5 @@
-import mysql from 'mysql2/promise';
+import { createConnection, Connection } from 'mysql2/promise';
 
-export default async (settings: object): Promise<object> => {
-    return await mysql.createConnection(settings);
+export default async (settings: object): Promise<Connection> => {
+    return await createConnection(settings);
 };

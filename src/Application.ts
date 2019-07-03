@@ -2,6 +2,7 @@ import { Server } from 'http';
 import { Context } from 'koa';
 import Koa from 'koa';
 import Router from 'koa-router';
+import BookController from './controllers/BookController';
 import errorHandler from './middlewares/errorHandler';
 
 export default class Application {
@@ -28,8 +29,13 @@ export default class Application {
     }
 
     private setUpRoutes(): void {
+
+        const bookController = new BookController(this.dbConnection);
+
         this.router.get('/', (ctx: Context): void => {
             ctx.body = 'Hello api';
         });
+
+        this.router.get('/books', (ctx: Context): Promise<void> => bookController.list(ctx));
     }
 }
