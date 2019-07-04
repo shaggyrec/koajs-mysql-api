@@ -1,5 +1,6 @@
 import { Connection } from 'mysql2';
 import { BookInterface } from '../dataTypes/Book';
+import NothingAffected from './errors/NothingAffected';
 
 interface UpdatingData {
     title?: string;
@@ -10,24 +11,28 @@ interface UpdatingData {
 
 class Book {
     private dbConnection: Connection;
-    private readonly DB_FIELDS: string[] = ['title', 'date', 'autor', 'description', 'image'];
+    public static readonly DB_FIELDS: string[] = ['title', 'date', 'autor', 'description', 'image'];
 
     public constructor(dbConnection: Connection) {
         this.dbConnection = dbConnection;
     }
 
     public async delete(id: number): Promise<void> {
-        await this.dbConnection.query('DELETE FROM books WHERE id = ?', [id]);
+        const [ result ] = await this.dbConnection.query('DELETE FROM books WHERE id = ?', [id]);
+
+        if (result.affectedRows === 0) {
+            throw new NothingAffected(`Book with id ${id} does not exist`);
+        }
     }
 
     public async create(book: BookInterface): Promise<void> {
-        const commaSeparatedDbFields = this.DB_FIELDS.join(',');
-        const commaSeparatedPlaceHolders = this.DB_FIELDS.map((): string => '?').join(',');
+        const commaSeparatedDbFields = Book.DB_FIELDS.join(',');
+        const commaSeparatedPlaceHolders = Book.DB_FIELDS.map((): string => '?').join(',');
         await this.dbConnection.query(
             `INSERT INTO books (${commaSeparatedDbFields}) VALUES (${commaSeparatedPlaceHolders})`,
             [
                 book.title,
-                new Date(),
+                book.date,
                 book.autor,
                 book.description,
                 book.image
@@ -40,10 +45,14 @@ class Book {
             .keys(data)
             .map((field: string): string => field + ' = ?')
             .join(',');
-        await this.dbConnection.query(
+        const [ result ] = await this.dbConnection.query(
             `UPDATE books SET ${commaSeparatedFieldsWithPlaceholders} WHERE id = ?`,
             [...Object.values(data), id]
         );
+
+        if (result.changedRows === 0) {
+            throw new NothingAffected(`Book with id ${id} does not exist`);
+        }
     }
 
 }

@@ -38,13 +38,13 @@ describe('Routes', (): void => {
             });
     });
 
-    it('should should throw bad request when bad params', async (): Promise<void> => {
+    it('should throw bad request when bad params', async (): Promise<void> => {
         await supertest(server)
             .get('/books?orderBy=asd')
             .expect(400);
     });
 
-    it('should should delete book', async (): Promise<void> => {
+    it('should delete book', async (): Promise<void> => {
         await supertest(server)
             .delete('/books/1')
             .expect(200);
@@ -52,7 +52,13 @@ describe('Routes', (): void => {
         assert.strictEqual(result.length, 0);
     });
 
-    it('should should update book', async (): Promise<void> => {
+    it('should throw 400 when try to delete non existence book', async (): Promise<void> => {
+        await supertest(server)
+            .delete('/books/99999999')
+            .expect(400);
+    });
+
+    it('should update book', async (): Promise<void> => {
         await supertest(server)
             .put('/books/1')
             .send({
@@ -68,16 +74,55 @@ describe('Routes', (): void => {
         assert.strictEqual(result[0].autor, 'pushkin');
     });
 
+    it('should return 400 when bad updating data', async (): Promise<void>  => {
+        await supertest(server)
+            .put('/books/1')
+            .expect(400);
+
+        await supertest(server)
+            .put('/books/1')
+            .send({
+                bad: 'field'
+            })
+            .expect(400);
+    });
+
+    it('should return 400 when book not exists', async (): Promise<void> =>  {
+        await supertest(server)
+            .put('/books/9999999')
+            .send({
+                title: 'title'
+            })
+            .expect(400);
+    });
+
     it('should should create book', async (): Promise<void> => {
         await supertest(server)
             .post('/books')
             .send({
                 title: 'title',
-                autor: 'pushkin'
+                autor: 'pushkin',
+                date: '2019-07-04',
+                description: 'description',
+                image: 'image'
             })
             .expect(201);
+
         const [result] = await dbConnection.query('SELECT * FROM books ORDER BY id DESC LIMIT 1');
         assert.strictEqual(result[0].title, 'title');
         assert.strictEqual(result[0].autor, 'pushkin');
+    });
+
+    it('should return 400 when bad creating data', async (): Promise<void>  => {
+        await supertest(server)
+            .post('/books')
+            .expect(400);
+
+        await supertest(server)
+            .post('/books')
+            .send({
+                bad: 'field'
+            })
+            .expect(400);
     });
 });

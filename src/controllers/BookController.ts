@@ -2,6 +2,7 @@ import { Context } from 'koa';
 import { Connection } from 'mysql2';
 import BookList from '../dbQuery/BookList';
 import Book from '../dbStorage/Book';
+import NothingAffected from '../dbStorage/errors/NothingAffected';
 import BadRequest from '../errors/BadRequest';
 
 interface QueryParams {
@@ -44,16 +45,55 @@ class BookController {
     }
 
     public async delete(ctx: Context): Promise<void> {
-        await this.dbStorage.delete(ctx.params.id);
-        ctx.status = 200;
+        try {
+            await this.dbStorage.delete(ctx.params.id);
+            ctx.status = 200;
+        } catch (e) {
+            if (e instanceof NothingAffected) {
+                throw new BadRequest(e.message);
+            }
+
+            throw e;
+        }
+
     }
     public async create(ctx: Context): Promise<void> {
+        const requestedFields = Object.keys(ctx.request.body);
+        BookController.assertDataToWriteIsValid(requestedFields);
+
+        Book.DB_FIELDS.map((fieldName: string): void => {
+            if (requestedFields.indexOf(fieldName) === -1) {
+                throw new BadRequest(`Field ${fieldName} is required`);
+            }
+        });
+
         await this.dbStorage.create(ctx.request.body);
         ctx.status = 201;
     }
     public async update(ctx: Context): Promise<void> {
-        await this.dbStorage.update(ctx.params.id, ctx.request.body);
-        ctx.status = 200;
+        try {
+            BookController.assertDataToWriteIsValid(Object.keys(ctx.request.body));
+            await this.dbStorage.update(ctx.params.id, ctx.request.body);
+            ctx.status = 200;
+        } catch (e) {
+            if (e instanceof NothingAffected) {
+                throw new BadRequest(e.message);
+            }
+            throw e;
+        }
+
+    }
+
+    private static assertDataToWriteIsValid(requestedFields: string[]): void {
+        if (requestedFields.length === 0) {
+            throw new BadRequest('No data have been passed');
+        }
+
+        requestedFields.map((fieldName: string): void => {
+            if ( Book.DB_FIELDS.indexOf(fieldName) === -1 ) {
+                throw new BadRequest(`Field ${fieldName} is unavailable for writing`);
+            }
+        });
     }
 
     private static assertQueryParametersAreValid(queryParams: QueryParams): void {
