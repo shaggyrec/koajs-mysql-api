@@ -24,7 +24,11 @@ Either create DB and user with same data or replace this data with actual
 
     npm build && npm start
     
+Application is running on the 3080 port
+    
 ## To run app in the dev mode (watch files changes):
 
     npm run start:dev
+    
+Application is running on the 3080 port
 
