@@ -39,5 +39,6 @@
         "tsc-watch": "^2.2.1",
         "tslint": "^5.18.0",
         "typescript": "^3.5.2"
-    }
+    },
+    "engines" : { "node" : ">=10.12.0" }
 }
