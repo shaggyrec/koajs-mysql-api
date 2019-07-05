@@ -177,7 +177,10 @@ describe('Routes', (): void => {
                         }
                     });
                     ctx.on('end', (): void => {
-                        assert.deepStrictEqual(result, stringsArray);
+                        assert.deepStrictEqual(
+                            result,
+                            stringsArray.map((string: string): string => string + '\n')
+                        );
                         callback();
                     });
                 });
@@ -206,7 +209,7 @@ describe('Routes', (): void => {
                                 'After school that day, Kamal took Amy and Tara up to the abandoned house',
                                 'Amy didn’t like it there',
                                 'Amy didn’t look too impressed'
-                            ]
+                            ].map((string: string): string => string + '\n')
                         );
                         callback();
                     });
