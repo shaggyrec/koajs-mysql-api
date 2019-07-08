@@ -99,25 +99,25 @@ class BookController {
     private static assertQueryParametersAreValid(queryParams: QueryParams): void {
         const dbFieldsComaSeparatedString = BookList.DB_FIELDS.join(',');
         if (queryParams.orderBy && BookList.DB_FIELDS.indexOf(queryParams.orderBy) === -1) {
-            throw new BadRequest('Param orderBy must by one of ' + dbFieldsComaSeparatedString);
+            throw new BadRequest('Param orderBy must be one of ' + dbFieldsComaSeparatedString);
         }
 
         if (queryParams.orderDirection && ['ASC', 'DESC'].indexOf(queryParams.orderDirection) === -1) {
-            throw new BadRequest('Param orderDirection must by one of ASC, DESC');
+            throw new BadRequest('Param orderDirection must be one of ASC, DESC');
         }
 
         if (queryParams.filterBy && BookList.DB_FIELDS.indexOf(queryParams.orderBy) === -1) {
-            throw new BadRequest('Param filterBy must by one of ' + dbFieldsComaSeparatedString);
+            throw new BadRequest('Param filterBy must be one of ' + dbFieldsComaSeparatedString);
         }
 
         // tslint:disable-next-line:radix
         if (queryParams.limit && isNaN(parseInt(queryParams.limit))) {
-            throw new BadRequest('Param limit must integer');
+            throw new BadRequest('Param limit must be an integer');
         }
 
         // tslint:disable-next-line:radix
         if (queryParams.offset && isNaN(parseInt(queryParams.limit))) {
-            throw new BadRequest('Param offset must integer');
+            throw new BadRequest('Param offset must be an integer');
 
         }
     }
